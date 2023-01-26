@@ -20,7 +20,7 @@ const images = require.context("../assets/images", true, /\.jpg$/);
 const tripInfo = {
   hawaii: {
     notes: "notes",
-    plan: [
+    placesToVisit: [
       {
         locationName: "Kona International Airport",
         details:
@@ -40,10 +40,39 @@ const tripInfo = {
       {
         locationName: "Magic Sands Beach Park",
         details:
-          "Pubplic park with white sand bech and rocky shoreline, offering lifeguard-overseen swimming and surfing",
+          "Public park with white sand beach and rocky shoreline, offering lifeguard-overseen swimming and surfing",
         src: images("./kona-airport.jpg"),
         lat: 19.60031634990462,
         lng: -155.9715179988575,
+      },
+    ],
+  },
+  japan: {
+    notes: "notes",
+    placesToVisit: [
+      {
+        locationName: "Japan Airport Terminal",
+        details:
+          "Small hub serving Hawaiian island domestic and global flights",
+        src: images("./kona-airport.jpg"),
+        lat: 35.77334959759778,
+        lng: 140.38346109955782,
+      },
+      {
+        locationName: "“Boso-no-Mura” Historic ambient in Old Chiba",
+        details:
+          "History museum modeled after a traditional Japanese village offering interactive experience",
+        src: images("./kona-airport.jpg"),
+        lat: 35.826615603877705,
+        lng: 140.2730898828563,
+      },
+      {
+        locationName: "Swan Village",
+        details:
+          "Nature walks at wetland rice fields where tundra swans feed and roost between November and February",
+        src: images("./kona-airport.jpg"),
+        lat: 35.825171156958234,
+        lng: 140.2203604573752,
       },
     ],
   },

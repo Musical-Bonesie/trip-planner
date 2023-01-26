@@ -1,27 +1,13 @@
 <template>
   <div class="flex flex-col h-screen max-h-screen">
-    <!-- Search / Results-->
     <div
-      class="flex justify-center relative bg-hero-pattern bg-cover px-4 pt-8 pb-32 z-20"
+      class="flex justify-center relative bg-hero-pattern bg-cover px-4 pt-12 pb-32 z-20"
     >
-      <!--Search input-->
-      <div class="w-full max-w-screen-sm">
-        <h1 class="text-white text-center text-3xl pb-4">Planner</h1>
-        <div class="flex">
-          <input
-            v-model="querySearch"
-            class="flex-1 py-3 px-2 rounded-tl-md rounded-bl-md focus:outline-none"
-            type="text"
-            placeholder="Search a location"
-          />
-          <i
-            @click="getTripInfo"
-            class="fa-solid fa-chevron-right bg-black text-white cursor-pointer px-4 rounded-tr-md rounded-br-md flex items-center"
-          ></i>
-        </div>
-      </div>
+      <!--Navigation/Trip Overview-->
+      <SidebarStandard />
+
       <!-- Trip Info-->
-      <TripInto v-if="tripInfo" v-bind:tripInfo="tripInfo" />
+      <TripInfo v-if="tripInfo" v-bind:tripInfo="tripInfo" />
     </div>
 
     <!--Map-->
@@ -33,12 +19,14 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore --- leaflet doesn't have typescript support yet
 import tripData from "../data/tripInfo";
-import TripInto from "../components/TripInfo.vue";
+import TripInfo from "../components/TripInfo.vue";
+import SidebarStandard from "../sidebars/SidebarStandard.vue";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore --- leaflet doesn't have typescript support yet
 import leaflet from "leaflet";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, onUpdated } from "vue";
 import axios from "axios";
+import store from "@/store";
 
 export type tripInfoDataType = {
   locationName: string;
@@ -49,15 +37,20 @@ export type tripInfoDataType = {
 };
 export default {
   name: "HomeView",
-  components: { TripInto },
+  components: { TripInfo, SidebarStandard },
 
   setup() {
+    const tripNames = Object.keys(tripData);
+
     let map: any;
     let marker: any;
     const querySearch = ref("");
-    const tripInfo = ref(null);
+    // const tripInfo = ref(null);
+    let tripInfo = null;
 
     onMounted(() => {
+      store.commit("updateSelectedLocation", tripNames[0]);
+      tripInfo = tripData[store.state.selectedLocation];
       map = leaflet
         .map("map")
         .setView([19.736769570948958, -156.04285486271075], 15);
@@ -80,42 +73,59 @@ export default {
         )
         .addTo(map);
     });
+    onUpdated(() => {
+      const location = store.state.selectedLocation;
+      store.commit("updateCoordinates", [
+        tripData[location].placesToVisit[0].lat,
+        tripData[location].placesToVisit[0].lng,
+      ]);
+
+      if (location) {
+        updateMapMarkers(location);
+      }
+    });
     const getTripInfo = async () => {
       try {
-        // binds input value to return trip info
-        // TODO: this should be Map indicators should have an @click that triggers this getTripInfo instead of the input
-        // [x] the input should recenter the map
-        // * Add this back in once server is set up:
+        // * TODO: Add this back in once server is set up:
         // const data = await axios.get(
         //   `apiInFo&userInputLocation=${querySearch.value}`
         // );
         // const result = data.data;
-
         // fill tripInfo with the response of te current trip selected
         // tripInfo.value = result;
-
         // Get and create markers to display locations from tripInfo:
-        const tripDataCoordinates = tripData.hawaii.plan.map(
-          (item: tripInfoDataType) => {
-            return [item.lat, item.lng];
-          }
-        );
 
-        var layerGroup = leaflet.layerGroup().addTo(map);
-        for (let i = 0; i < tripDataCoordinates.length; i++) {
-          marker = leaflet.marker([
-            tripDataCoordinates[i][0],
-            tripDataCoordinates[i][1],
-          ]);
-          layerGroup.addLayer(marker);
-        }
-        var overlay = { markers: layerGroup };
-        leaflet.control.layers(undefined, overlay).addTo(map);
+        console.log("getTripInfo Async func");
       } catch (error) {
         console.error("Trip Info Error", error);
       }
     };
-    return { querySearch, tripInfo, getTripInfo };
+    const updateMapMarkers = (locationName: string) => {
+      const tripDataCoordinates = tripData[locationName].placesToVisit.map(
+        (item: tripInfoDataType) => {
+          return [item.lat, item.lng];
+        }
+      );
+      console.log("cors", tripDataCoordinates);
+      map.flyTo(
+        tripDataCoordinates[0],
+
+        15,
+        {
+          animate: true,
+          duration: 2, // in seconds
+        }
+      );
+      var layerGroup = leaflet.layerGroup().addTo(map);
+      for (let i = 0; i < tripDataCoordinates.length; i++) {
+        marker = leaflet.marker([
+          tripDataCoordinates[i][0],
+          tripDataCoordinates[i][1],
+        ]);
+        layerGroup.addLayer(marker);
+      }
+    };
+    return { querySearch, tripInfo, getTripInfo, updateMapMarkers };
   },
 };
 </script>
