@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-col h-screen max-h-screen">
+  <div class="flex h-screen max-h-screen">
     <div
-      class="flex justify-center relative bg-hero-pattern bg-cover px-4 pt-12 pb-32 z-20"
+      class="flex justify-center items-start relative bg-hero-pattern bg-cover px-4 pt-12 pb-32 z-20 w-1/4"
     >
       <!--Navigation/Trip Overview-->
       <SidebarStandard />
@@ -11,7 +11,7 @@
     </div>
 
     <!--Map-->
-    <div id="map" class="h-full z-10"></div>
+    <div id="map" class="h-full w-3/4 z-10"></div>
   </div>
 </template>
 

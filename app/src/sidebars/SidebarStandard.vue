@@ -1,7 +1,7 @@
 <template>
   <div v-show="tripNames" class="shadow-md bg-white px-1 absolute">
     <h3>Trips</h3>
-    <ul class="flex justify-center">
+    <ul class="flex flex-col items-center justify-center">
       <li
         class=""
         v-for="(name, index) in tripNames"

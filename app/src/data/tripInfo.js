@@ -76,6 +76,33 @@ const tripInfo = {
       },
     ],
   },
+  canada: {
+    notes: "notes",
+    placesToVisit: [
+      {
+        locationName: "Vancouver International Airport",
+        details:
+          "Small hub serving Hawaiian island domestic and global flights",
+        src: images("./kona-airport.jpg"),
+        lat: 49.19670523522321,
+        lng: -123.1816625182006,
+      },
+      {
+        locationName: "Cafe Lokal",
+        details: "Local cafe with tasty treats",
+        src: images("./kona-airport.jpg"),
+        lat: 49.269140333158674,
+        lng: -123.16466254891003,
+      },
+      {
+        locationName: "Canada Place",
+        details: "Built to look like a ship.",
+        src: images("./kona-airport.jpg"),
+        lat: 49.29021279021636,
+        lng: -123.11158290057625,
+      },
+    ],
+  },
 };
 
 export default tripInfo;
