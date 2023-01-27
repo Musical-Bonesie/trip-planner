@@ -1,15 +1,17 @@
 <template>
   <div
-    class="absolute -bottom-64 lg:-bottom-20 flex flex-col lg:flex-row gap-y-4 gap-x-12 px-8 pt-8 pb-12 rounded-md bg-white"
+    v-for="(place, index) in selectedTripDetails.placesToVisit"
+    :key="index"
+    class="absolute top-90 lg:left-64 flex flex-col lg:flex-row gap-y-4 gap-x-12 px-8 pt-8 pb-12 rounded-md bg-white"
   >
     <!--Flex Item -->
     <div class="flex flex-col">
       <h3 class="text-xs mb-2 uppercase">Location</h3>
-      <span class="text-2xl">{{ tripInfo.locationName }}</span>
+      <span class="text-2xl">{{ place.locationName }}</span>
     </div>
     <div class="flex flex-col">
-      <h3 class="text-xs mb-2 uppercase">Timezone</h3>
-      <span class="text-2xl">CET</span>
+      <h3 class="text-xs mb-2 uppercase">Details</h3>
+      <span class="text-2xl">{{ place.details }}</span>
     </div>
     <div class="flex flex-col">
       <h3 class="text-xs mb-2 uppercase">Travel Time</h3>
@@ -20,6 +22,6 @@
 
 <script>
 export default {
-  props: ["tripInfo"],
+  props: ["selectedTripDetails"],
 };
 </script>

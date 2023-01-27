@@ -7,7 +7,10 @@
       <SidebarStandard />
 
       <!-- Trip Info-->
-      <TripInfo v-if="tripInfo" v-bind:tripInfo="tripInfo" />
+      <TripInfo
+        v-if="selectedTripDetails()"
+        v-bind:selectedTripDetails="selectedTripDetails()"
+      />
     </div>
 
     <!--Map-->
@@ -25,15 +28,16 @@ import SidebarStandard from "../sidebars/SidebarStandard.vue";
 // @ts-ignore --- leaflet doesn't have typescript support yet
 import leaflet from "leaflet";
 import { onMounted, ref, onUpdated } from "vue";
-import axios from "axios";
 import store from "@/store";
 
 export type tripInfoDataType = {
-  locationName: string;
-  details: string | null;
-  src: string;
-  lat: number;
-  lng: number;
+  [key: string]: {
+    locationName: string;
+    details: string | null;
+    src: string;
+    lat: number;
+    lng: number;
+  };
 };
 export default {
   name: "HomeView",
@@ -45,12 +49,12 @@ export default {
     let map: any;
     let marker: any;
     const querySearch = ref("");
-    // const tripInfo = ref(null);
-    let tripInfo = null;
+    let tripInfo = ref(null);
 
     onMounted(() => {
+      store.dispatch("getTripData");
       store.commit("updateSelectedLocation", tripNames[0]);
-      tripInfo = tripData[store.state.selectedLocation];
+      tripInfo = tripData[store.state.selectedLocation as keyof unknown];
       map = leaflet
         .map("map")
         .setView([19.736769570948958, -156.04285486271075], 15);
@@ -75,38 +79,24 @@ export default {
     });
     onUpdated(() => {
       const location = store.state.selectedLocation;
-      store.commit("updateCoordinates", [
-        tripData[location].placesToVisit[0].lat,
-        tripData[location].placesToVisit[0].lng,
-      ]);
 
       if (location) {
+        store.commit("updateCoordinates", [
+          tripData[location as keyof undefined]?.placesToVisit[0].lat,
+          tripData[location as keyof object]?.placesToVisit[0].lng,
+        ]);
         updateMapMarkers(location);
       }
     });
-    const getTripInfo = async () => {
-      try {
-        // * TODO: Add this back in once server is set up:
-        // const data = await axios.get(
-        //   `apiInFo&userInputLocation=${querySearch.value}`
-        // );
-        // const result = data.data;
-        // fill tripInfo with the response of te current trip selected
-        // tripInfo.value = result;
-        // Get and create markers to display locations from tripInfo:
 
-        console.log("getTripInfo Async func");
-      } catch (error) {
-        console.error("Trip Info Error", error);
-      }
-    };
     const updateMapMarkers = (locationName: string) => {
-      const tripDataCoordinates = tripData[locationName].placesToVisit.map(
-        (item: tripInfoDataType) => {
-          return [item.lat, item.lng];
-        }
-      );
-      console.log("cors", tripDataCoordinates);
+      const tripDataCoordinates = tripData
+        ? tripData[locationName as keyof object].placesToVisit.map(
+            (item: tripInfoDataType) => {
+              return [item.lat, item.lng];
+            }
+          )
+        : [];
       map.flyTo(
         tripDataCoordinates[0],
 
@@ -125,7 +115,11 @@ export default {
         layerGroup.addLayer(marker);
       }
     };
-    return { querySearch, tripInfo, getTripInfo, updateMapMarkers };
+
+    const selectedTripDetails = () => {
+      return store.getters.getLocationDetails;
+    };
+    return { selectedTripDetails, updateMapMarkers };
   },
 };
 </script>
