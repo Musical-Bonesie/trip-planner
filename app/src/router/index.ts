@@ -4,7 +4,7 @@ import HomeView from "../views/HomeView.vue";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "home",
+    name: "HomeView",
     component: HomeView,
     meta: {
       title: "Trip Planner",

@@ -22,13 +22,14 @@ export default createStore({
     updateCoordinates(state, coordinates: number[]) {
       state.coordinates.splice(0, 2).push(...coordinates);
     },
-    updateTripDetails(state, tripData) {
-      state.tripData = tripData;
+    updateTripDetails(state, data) {
+      state.tripData = data;
     },
   },
   actions: {
     async getTripData({ commit }) {
       try {
+        ("getTripData Store");
         const response = await axios.get("/api/trip-details");
         if (response) {
           commit("updateTripDetails", response.data);

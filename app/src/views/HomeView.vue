@@ -4,13 +4,14 @@
       class="flex justify-center items-start relative bg-hero-pattern bg-cover px-4 pt-12 pb-32 z-20 w-1/4"
     >
       <!--Navigation/Trip Overview-->
-      <SidebarStandard />
+      <!-- <SidebarStandard /> -->
+      <ExpansionPanel v-show="userTrips" />
 
       <!-- Trip Info-->
-      <TripInfo
+      <!-- <TripInfo
         v-if="selectedTripDetails()"
         v-bind:selectedTripDetails="selectedTripDetails()"
-      />
+      /> -->
     </div>
 
     <!--Map-->
@@ -22,12 +23,12 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore --- leaflet doesn't have typescript support yet
 import tripData from "../data/tripInfo";
-import TripInfo from "../components/TripInfo.vue";
-import SidebarStandard from "../sidebars/SidebarStandard.vue";
+
+import ExpansionPanel from "../components/ExpansionPanel.vue";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore --- leaflet doesn't have typescript support yet
 import leaflet from "leaflet";
-import { onMounted, ref, onUpdated } from "vue";
+import { onMounted, ref, onUpdated, onBeforeMount } from "vue";
 import store from "@/store";
 
 export type tripInfoDataType = {
@@ -41,7 +42,7 @@ export type tripInfoDataType = {
 };
 export default {
   name: "HomeView",
-  components: { TripInfo, SidebarStandard },
+  components: { ExpansionPanel },
 
   setup() {
     const tripNames = Object.keys(tripData);
@@ -51,16 +52,20 @@ export default {
     const querySearch = ref("");
     let tripInfo = ref(null);
 
-    onMounted(() => {
+    onBeforeMount(() => {
       store.dispatch("getTripData");
+    });
+
+    onMounted(() => {
       store.commit("updateSelectedLocation", tripNames[0]);
       tripInfo = tripData[store.state.selectedLocation as keyof unknown];
+
       map = leaflet
         .map("map")
         .setView([19.736769570948958, -156.04285486271075], 15);
-      marker = leaflet
-        .marker([19.736769570948958, -156.04285486271075])
-        .addTo(map);
+      // marker = leaflet
+      //   .marker([19.736769570948958, -156.04285486271075])
+      //   .addTo(map);
 
       leaflet
         .tileLayer(
@@ -119,7 +124,11 @@ export default {
     const selectedTripDetails = () => {
       return store.getters.getLocationDetails;
     };
-    return { selectedTripDetails, updateMapMarkers };
+    const userTrips = () => {
+      return store.state.tripData;
+    };
+
+    return { selectedTripDetails, updateMapMarkers, userTrips };
   },
 };
 </script>
