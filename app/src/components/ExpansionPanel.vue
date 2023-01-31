@@ -1,7 +1,7 @@
 <template>
   <v-expansion-panels variant="popout" class="my-4">
     <v-expansion-panel v-for="(name, index) in tripNames" :key="index">
-      <v-expansion-panel-title>
+      <v-expansion-panel-title @click="$emit('handleLocationClick', name)">
         <v-row no-gutters>
           <v-col
             cols="4"
@@ -29,37 +29,17 @@
 </template>
 
 <script>
-import store from "@/store";
-import { ref, computed } from "vue";
-
 export default {
   name: "ExpansionPanel",
   props: ["trips"],
+  emits: ["handleLocationClick"],
 
   setup(props) {
     let tripNames = Object.keys(props.trips ? props.trips : []);
-    let placesToVisit = {};
-
-    if (tripNames) {
-      tripNames.forEach((name) => {
-        let tempObj = { [name]: [] };
-        props.trips[name].placesToVisit.map((place) => {
-          tempObj[name].push(place.locationName);
-          // selectedPlace.push(place.locationName);
-        });
-        return Object.assign(placesToVisit, tempObj);
-      });
-    }
-
-    const handleLocationClick = (locationName) => {
-      store.commit("updateSelectedLocation", locationName);
-    };
 
     return {
-      handleLocationClick,
       tripNames,
       userTrips: props.trips,
-      placesToVisit,
     };
   },
 };

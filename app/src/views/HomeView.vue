@@ -4,7 +4,10 @@
       v-if="userTrips()"
       class="flex justify-center items-start relative bg-hero-pattern bg-cover px-4 pt-12 pb-32 z-20 transition-all w-1/3"
     >
-      <ExpansionPanel :trips="userTrips()" />
+      <ExpansionPanel
+        :trips="userTrips()"
+        v-on:handleLocationClick="handleLocationClick"
+      />
     </div>
 
     <!--Map-->
@@ -13,53 +16,40 @@
 </template>
 
 <script lang="ts">
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore --- leaflet doesn't have typescript support yet
-import tripData from "../data/tripInfo";
-
 import ExpansionPanel from "../components/ExpansionPanel.vue";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore --- leaflet doesn't have typescript support yet
-import leaflet from "leaflet";
+import leaflet, { LatLngExpression } from "leaflet";
 import { onMounted, ref, onUpdated, onBeforeMount } from "vue";
 import store from "@/store";
+import { placesStateCoorType, tripInfoDataType } from "../shared/types";
 
-export type tripInfoDataType = {
-  [key: string]: {
-    locationName: string;
-    details: string | null;
-    src: string;
-    lat: number;
-    lng: number;
-  };
-};
 export default {
   name: "HomeView",
   components: { ExpansionPanel },
 
   setup() {
-    const tripNames = Object.keys(tripData);
-
+    const tripData = ref(store.state.tripData);
+    const initialCoordinates = ref([19.736769570948958, -156.04285486271075]);
     let map: any;
     let marker: any;
     const querySearch = ref("");
-    let tripInfo = store.state.tripData;
-    let trips = ref(null);
 
     onBeforeMount(() => {
       store.dispatch("getTripData");
     });
 
     onMounted(() => {
-      store.commit("updateSelectedLocation", tripNames[0]);
-      tripInfo = tripData[store.state.selectedLocation as keyof unknown];
+      if (tripData.value) {
+        const tripNames = Object.keys(tripData);
+        store.commit("updateSelectedLocation", tripNames[0]);
+        initialCoordinates.value = [
+          tripData.value[tripNames[0]].placesToVisit[0].lng,
+          tripData.value[tripNames[0]].placesToVisit[0].lat,
+        ];
+      }
 
       map = leaflet
         .map("map")
-        .setView([19.736769570948958, -156.04285486271075], 15);
-      // marker = leaflet
-      //   .marker([19.736769570948958, -156.04285486271075])
-      //   .addTo(map);
+        .setView(initialCoordinates.value as LatLngExpression, 9);
 
       leaflet
         .tileLayer(
@@ -77,42 +67,32 @@ export default {
         .addTo(map);
     });
     onUpdated(() => {
-      const location = store.state.selectedLocation;
-
-      if (location) {
-        store.commit("updateCoordinates", [
-          tripData[location as keyof undefined]?.placesToVisit[0].lat,
-          tripData[location as keyof object]?.placesToVisit[0].lng,
-        ]);
-        updateMapMarkers(location);
-      }
+      tripData.value = store.state.tripData;
     });
 
     const updateMapMarkers = (locationName: string) => {
-      const tripDataCoordinates = tripData
-        ? tripData[locationName as keyof object].placesToVisit.map(
-            (item: tripInfoDataType) => {
-              return [item.lat, item.lng];
-            }
-          )
-        : [];
-      map.flyTo(
-        tripDataCoordinates[0],
+      const locationCoor = store.state.placesToVisitCoordinates;
 
-        15,
-        {
-          animate: true,
-          duration: 2, // in seconds
+      if (locationCoor) {
+        map.flyTo(
+          locationCoor[locationName][0],
+
+          15,
+          {
+            animate: true,
+            duration: 2, // in seconds
+          }
+        );
+        var layerGroup = leaflet.layerGroup().addTo(map);
+        for (let i = 0; i < locationCoor[locationName].length; i++) {
+          marker = leaflet.marker([
+            locationCoor[locationName][i][0],
+            locationCoor[locationName][i][1],
+          ]);
+          layerGroup.addLayer(marker);
         }
-      );
-      var layerGroup = leaflet.layerGroup().addTo(map);
-      for (let i = 0; i < tripDataCoordinates.length; i++) {
-        marker = leaflet.marker([
-          tripDataCoordinates[i][0],
-          tripDataCoordinates[i][1],
-        ]);
-        layerGroup.addLayer(marker);
       }
+      // TODO add error handling to alert the user there are no current placesToVisit locations set
     };
 
     const selectedTripDetails = () => {
@@ -122,7 +102,22 @@ export default {
       return store.state.tripData;
     };
 
-    return { selectedTripDetails, updateMapMarkers, userTrips };
+    const handleLocationClick = (locationName: string) => {
+      if (
+        locationName.toLowerCase() !==
+        store.state.selectedLocation.toLowerCase()
+      ) {
+        store.commit("updateSelectedLocation", locationName);
+        updateMapMarkers(locationName);
+      }
+    };
+
+    return {
+      selectedTripDetails,
+      updateMapMarkers,
+      userTrips,
+      handleLocationClick,
+    };
   },
 };
 </script>
