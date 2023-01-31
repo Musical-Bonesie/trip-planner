@@ -6,7 +6,7 @@ export type PlacesToVisitObjectType = {
   lng: number;
 };
 
-export type tripInfoDataType = {
+export type TripInfoDataType = {
   [key: string]: {
     notes?: string;
     placesToVisit: PlacesToVisitObjectType[];

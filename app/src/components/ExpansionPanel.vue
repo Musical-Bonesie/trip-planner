@@ -14,7 +14,11 @@
         <v-text-field>
           <p class="text-gray-700">Trip Notes: {{ userTrips[name].notes }}</p>
         </v-text-field>
-        <v-card v-for="place in userTrips[name].placesToVisit" :key="place">
+        <v-card
+          v-for="place in userTrips[name].placesToVisit"
+          :key="place.locationName"
+          @click="$emit('goToMapMarker', [place.lat, place.lng])"
+        >
           <v-card-item>
             <v-card-title class="text-gray-700">{{
               place.locationName
@@ -28,14 +32,23 @@
   </v-expansion-panels>
 </template>
 
-<script>
+<script lang="ts">
+import { PropType } from "vue";
+import { TripInfoDataType } from "../shared/types";
+
 export default {
   name: "ExpansionPanel",
-  props: ["trips"],
-  emits: ["handleLocationClick"],
+  props: {
+    trips: {
+      type: Object as PropType<TripInfoDataType>,
+      required: true,
+    },
+  },
+
+  emits: ["handleLocationClick", "goToMapMarker"],
 
   setup(props) {
-    let tripNames = Object.keys(props.trips ? props.trips : []);
+    let tripNames = Object.keys(props.trips);
 
     return {
       tripNames,
