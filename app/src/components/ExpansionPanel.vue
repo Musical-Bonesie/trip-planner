@@ -44,7 +44,7 @@ export default {
     let tripNames = Object.keys(props.trips ? props.trips : []);
     let placesToVisit = {};
     // TODO: fix checkbox issue with state
-    let selectedPlace = [];
+    let selectedPlace = ref([]);
 
     if (tripNames) {
       tripNames.forEach((name) => {
