@@ -2,21 +2,13 @@
   <div class="flex h-screen max-h-screen">
     <div
       v-if="userTrips()"
-      class="flex justify-center items-start relative bg-hero-pattern bg-cover px-4 pt-12 pb-32 z-20 w-1/4"
+      class="flex justify-center items-start relative bg-hero-pattern bg-cover px-4 pt-12 pb-32 z-20 transition-all w-1/3"
     >
-      <!--Navigation/Trip Overview-->
-      <!-- <SidebarStandard /> -->
       <ExpansionPanel :trips="userTrips()" />
-
-      <!-- Trip Info-->
-      <!-- <TripInfo
-        v-if="selectedTripDetails()"
-        v-bind:selectedTripDetails="selectedTripDetails()"
-      /> -->
     </div>
 
     <!--Map-->
-    <div id="map" class="h-full w-3/4 z-10"></div>
+    <div id="map" class="h-full w-3/4 z-10 transition-all"></div>
   </div>
 </template>
 
