@@ -1,11 +1,12 @@
 <template>
   <div class="flex h-screen max-h-screen">
     <div
+      v-if="userTrips()"
       class="flex justify-center items-start relative bg-hero-pattern bg-cover px-4 pt-12 pb-32 z-20 w-1/4"
     >
       <!--Navigation/Trip Overview-->
       <!-- <SidebarStandard /> -->
-      <ExpansionPanel v-show="userTrips" />
+      <ExpansionPanel :trips="userTrips()" />
 
       <!-- Trip Info-->
       <!-- <TripInfo
@@ -50,7 +51,8 @@ export default {
     let map: any;
     let marker: any;
     const querySearch = ref("");
-    let tripInfo = ref(null);
+    let tripInfo = store.state.tripData;
+    let trips = ref(null);
 
     onBeforeMount(() => {
       store.dispatch("getTripData");
