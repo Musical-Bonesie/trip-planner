@@ -1,35 +1,20 @@
 <template>
   <div class="flex h-screen max-h-screen">
-    <div
-      v-if="tripData"
-      class="flex justify-center items-start relative bg-hero-pattern bg-cover px-4 pt-12 pb-32 z-20 transition-all w-1/3"
-    >
-      <ExpansionPanel
-        :trips="tripData"
-        v-on:handleLocationClick="handleLocationClick"
-        v-on:goToMapMarker="handleClickGoToMapMarker"
-      />
-    </div>
-
-    <!--Leaflet Map-->
-    <div id="map" class="h-full w-3/4 z-10 transition-all"></div>
+    <div id="map" class="h-full w-full z-10 transition-all"></div>
   </div>
 </template>
 
 <script lang="ts">
-import ExpansionPanel from "../components/ExpansionPanel.vue";
-import leaflet, { LatLngExpression, Map, Marker } from "leaflet";
-import { onMounted, ref, onUpdated, onBeforeMount, computed } from "vue";
-import { useStore } from "vuex";
+import store from "@/store";
 import { TripInfoDataType } from "@/shared/types";
+import leaflet, { LatLngExpression, Map, Marker } from "leaflet";
+import { onMounted, ref, onUpdated, onBeforeMount } from "vue";
 
 export default {
-  name: "HomeView",
-  components: { ExpansionPanel },
+  name: "MapView",
 
   setup() {
-    const store = useStore();
-    const tripData = computed(() => store.state.tripData);
+    const tripData = ref(store.state.tripData);
     const initialCoordinates = ref([19.736769570948958, -156.04285486271075]);
     let map: Map;
     let marker: Marker;
@@ -65,6 +50,9 @@ export default {
           }
         )
         .addTo(map);
+    });
+    onUpdated(() => {
+      tripData.value = store.state.tripData;
     });
 
     const updateMapMarkers = (locationName: string) => {
@@ -104,6 +92,9 @@ export default {
     const selectedTripDetails = () => {
       return store.getters.getLocationDetails;
     };
+    const userTrips = () => {
+      return store.state.tripData as TripInfoDataType;
+    };
 
     const handleLocationClick = (locationName: string) => {
       if (
@@ -125,7 +116,7 @@ export default {
     return {
       selectedTripDetails,
       updateMapMarkers,
-      tripData,
+      userTrips,
       handleLocationClick,
       handleClickGoToMapMarker,
     };

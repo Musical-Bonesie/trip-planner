@@ -1,5 +1,5 @@
 <template>
-  <v-expansion-panels variant="popout" class="my-4">
+  <v-expansion-panels variant="popout" class="my-0" v-if="userTrips">
     <v-expansion-panel v-for="(name, index) in tripNames" :key="index">
       <v-expansion-panel-title @click="$emit('handleLocationClick', name)">
         <v-row no-gutters>
@@ -30,10 +30,18 @@
       </v-expansion-panel-text></v-expansion-panel
     >
   </v-expansion-panels>
+  <div class="flex justify-center text-center" v-else>
+    <v-progress-circular
+      color="dark-blue"
+      indeterminate
+      :size="70"
+    ></v-progress-circular>
+  </div>
 </template>
 
 <script lang="ts">
 import { PropType } from "vue";
+
 import { TripInfoDataType } from "../shared/types";
 
 export default {
@@ -46,9 +54,9 @@ export default {
   },
 
   emits: ["handleLocationClick", "goToMapMarker"],
-
-  setup(props) {
-    let tripNames = Object.keys(props.trips);
+  // eslint-disable-next-line
+  setup(props: any | TripInfoDataType) {
+    const tripNames = Object.keys(props.trips);
 
     return {
       tripNames,
