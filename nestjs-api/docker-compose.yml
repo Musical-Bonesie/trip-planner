@@ -1,14 +1,17 @@
 #  docker compose automatically spwans Docker Container snad destroys them
+# Explaination/ docker container name: dev-db, image: version of postgres we want to run ,  port: exported on the port: 5434  
 version: '3.8'
 services:
-  dev-db: 
-  image: postgres:13
-  ports:
-  - 5434:5432
-environment:
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: 123
-  POSTGRES_DB: nest
-networks: 
-- nestjsTripApi
-
+  dev-db:
+    image: postgres:13
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: trip_planner_db
+    networks:
+      - trip-planner-backend
+ 
+networks:
+   trip-planner-backend:
