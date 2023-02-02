@@ -1,37 +1,45 @@
 <template>
-  <div class="bg-hero-pattern bg-cover h-screen pt-6">
-    <!-- <router-link
-      :to="{ name: 'trips/:tripName', params: { tripName: name } }"
-      >{{ name }}</router-link
-    > -->
+  <div
+    v-if="tripNames"
+    class="bg-hero-pattern bg-cover h-screen pt-6 flex flex-col items-center justify-center"
+  >
+    <div class="flex m-4" v-for="name in tripNames" :key="name">
+      <router-link
+        class="uppercase p-3 font-bold rounded-lg bg-slate-200 hover:bg-white hover:underline"
+        :to="{ name: `TripDetails`, params: { tripName: name } }"
+        >{{ name }}</router-link
+      >
+    </div>
   </div>
-  <div></div>
+  <div class="flex justify-center text-center" v-else>
+    <v-progress-circular
+      color="dark-blue"
+      indeterminate
+      :size="70"
+    ></v-progress-circular>
+  </div>
 </template>
 
 <script lang="ts">
-import store from "@/store";
-import { TripInfoDataType } from "@/shared/types";
-import { onMounted, onUpdated, ref } from "vue";
+import { useStore } from "vuex";
+import { onBeforeMount, computed } from "vue";
 
 export default {
   name: "TripListView",
 
   setup() {
-    // const tripNames = Object.keys(props.trips);
-    const data = ref(store.state.tripData);
-
-    onMounted(() => {
-      data.value = store.state.tripData;
-    });
-    onUpdated(() => {
-      data.value = store.state.tripData;
+    onBeforeMount(() => {
+      store.dispatch("getTripData");
     });
 
-    const userTrips = () => {
-      return store.state.tripData as TripInfoDataType;
+    const store = useStore();
+    const data = computed(() =>
+      store.state.tripData ? Object.keys(store.state.tripData) : []
+    );
+
+    return {
+      tripNames: data,
     };
-
-    return { userTrips };
   },
 };
 </script>

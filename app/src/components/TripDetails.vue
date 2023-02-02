@@ -41,33 +41,27 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, onBeforeMount, onUpdated, computed } from "vue";
-import { mapState, useStore } from "vuex";
+import { ref, onBeforeMount, computed } from "vue";
+import { useStore } from "vuex";
+import { useRoute } from "vue-router";
 
 export default {
   name: "TripDetails",
-  props: {
-    tripName: { type: String, required: true },
-  },
-  computed: {
-    ...mapState(["tripData"]),
-  },
 
-  setup(props) {
+  setup() {
+    const route = useRoute();
     const store = useStore();
-
-    let show = ref(false);
-    const data = store.state.tripData;
-
-    console.log(data);
+    const show = ref(false);
+    const data = computed(() => store.state.tripData);
+    const name = route.params.tripName;
 
     onBeforeMount(() => {
       store.dispatch("getTripData");
     });
 
     return {
-      name: props.tripName,
-      placesToVisit: computed(() => store.state.tripData),
+      name,
+      placesToVisit: data,
       show,
     };
   },
