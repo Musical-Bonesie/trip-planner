@@ -1,5 +1,8 @@
 <template>
-  <div v-if="placesToVisit">
+  <div
+    v-if="placesToVisit && show"
+    class="py-3 bg-hero-pattern bg-cover h-screen"
+  >
     <v-card
       class="mx-auto"
       max-width="344"
@@ -15,20 +18,28 @@
       <v-card-title> {{ place.locationName }}</v-card-title>
 
       <v-card-actions>
-        <v-btn color="orange-lighten-2" variant="text" @click="show = !show">
+        <v-btn
+          color="orange-lighten-2"
+          variant="text"
+          @click="show[place.locationName] = !show[place.locationName]"
+        >
           Details
         </v-btn>
 
         <v-spacer></v-spacer>
 
         <v-btn
-          :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-          @click="show = !show"
+          :icon="
+            show[place.locationName]
+              ? 'fas fa-regular fa-circle-chevron-up'
+              : 'fas fa-regular fa-circle-chevron-down'
+          "
+          @click="show[place.locationName] = !show[place.locationName]"
         ></v-btn>
       </v-card-actions>
 
       <v-expand-transition>
-        <div v-show="show">
+        <div v-show="show[place.locationName]">
           <v-divider></v-divider>
 
           <v-card-text>
@@ -41,9 +52,14 @@
 </template>
 
 <script lang="ts">
-import { ref, onBeforeMount, computed } from "vue";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
+import { ref, onBeforeMount, computed, onUpdated, onMounted, Ref } from "vue";
+import { PlacesToVisitObjectType } from "../shared/types";
+
+type ShowDetailsType = {
+  [key: string]: boolean;
+};
 
 export default {
   name: "TripDetails",
@@ -51,12 +67,47 @@ export default {
   setup() {
     const route = useRoute();
     const store = useStore();
-    const show = ref(false);
     const data = computed(() => store.state.tripData);
     const name = route.params.tripName;
+    const test = ref({});
+    const show = computed({
+      get() {
+        return test.value;
+      },
+      set(val: object) {
+        test.value = val;
+      },
+    }) as ShowDetailsType | Ref<Record<string, never>>;
 
     onBeforeMount(() => {
       store.dispatch("getTripData");
+    });
+    onMounted(() => {
+      if (data.value && name) {
+        const updateShowRefObj = {};
+        data.value[`${name}`].placesToVisit.forEach(
+          (place: PlacesToVisitObjectType) => {
+            Object.assign(updateShowRefObj, {
+              [`${place.locationName}`]: false,
+            });
+          }
+        );
+        show.value = updateShowRefObj;
+      }
+    });
+
+    onUpdated(() => {
+      if (data.value && name) {
+        const updateShowRefObj = {};
+        data.value[`${name}`].placesToVisit.forEach(
+          (place: PlacesToVisitObjectType) => {
+            Object.assign(updateShowRefObj, {
+              [`${place.locationName}`]: false,
+            });
+          }
+        );
+        show.value = updateShowRefObj;
+      }
     });
 
     return {
