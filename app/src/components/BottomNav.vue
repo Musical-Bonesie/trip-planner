@@ -1,41 +1,46 @@
 <template>
-  <v-app>
-    <v-bottom-navigation
-      v-model="value"
-      app
-      :background-color="color"
-      dark
-      grow
-      :elevation="10"
-    >
-      <v-btn value="music" height="100%" :color="color">
-        <span>Search</span>
-        <v-icon icon="fas fa-search"></v-icon>
-      </v-btn>
-
-      <v-btn value="books" height="100%" :color="color">
-        <span>Trips</span>
+  <v-bottom-navigation
+    app="app"
+    mode="shift"
+    v-model="value"
+    :background-color="color"
+    dark
+    grow
+    :elevation="10"
+  >
+    <v-btn height="100%" :color="color" @click="handleSearch">
+      <span value="search">Search</span>
+      <v-icon icon="fas fa-search"></v-icon>
+    </v-btn>
+    <router-link :to="{ name: `TripListView` }">
+      <v-btn height="100%" :color="color">
+        <span value="/trips">Trips</span>
         <v-icon icon="fas fa-regular fa-plane-departure"></v-icon>
       </v-btn>
-
-      <v-btn value="photos" height="100%" :color="color">
-        <span>Map</span>
+    </router-link>
+    <router-link to="/">
+      <v-btn height="100%" :color="color">
+        <span value="/home">Map</span>
         <v-icon icon="fas fa-regular fa-map-location-dot"></v-icon>
       </v-btn>
-    </v-bottom-navigation>
-  </v-app>
+    </router-link>
+  </v-bottom-navigation>
 </template>
 
 <script>
 import { ref } from "vue";
+
 export default {
   name: "BottomNav",
 
   setup() {
-    let value = ref("music");
+    let value = ref("search");
     let color = ref("black");
+    const handleSearch = () => {
+      alert("Search coming soon 🕵️‍♀️");
+    };
 
-    return { color, value };
+    return { color, value, handleSearch };
   },
 };
 </script>

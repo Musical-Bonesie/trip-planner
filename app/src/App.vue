@@ -1,11 +1,22 @@
 <template>
-  <router-view />
+  <v-app>
+    <v-main>
+      <router-view name="nav" />
+      <router-view />
+    </v-main>
+  </v-app>
 </template>
 
-<style>
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-</style>
+<script lang="ts">
+import { defineComponent } from "vue";
+
+export default defineComponent({
+  name: "App",
+
+  data() {
+    return {
+      //
+    };
+  },
+});
+</script>

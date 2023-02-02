@@ -5,6 +5,8 @@ import BottomNav from "../components/BottomNav.vue";
 import MapView from "../views/MapView.vue";
 import TripListView from "../views/TripListView.vue";
 
+// TODO Add a /404 Page not found route: https://router.vuejs.org/guide/essentials/dynamic-matching.html#catch-all-404-not-found-route
+
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
@@ -33,8 +35,8 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/trips",
-    name: "trips",
-    component: TripListView,
+    name: "TripListView",
+    components: { default: TripListView, nav: BottomNav },
     meta: {
       title: "Trip Planner",
     },
@@ -42,7 +44,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/trips/:tripName",
     name: "TripDetails",
-    component: TripDetails,
+    components: { default: TripDetails, nav: BottomNav },
     // small change to pass param props instead of vue-router taking params from the URL route
     props: true,
     // route guard: params: to, from, next function that decides to proceed to the 'to' route or not.

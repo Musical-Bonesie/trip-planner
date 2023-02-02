@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="placesToVisit && show"
+    v-if="placesToVisit && Object.keys(show).length"
     class="py-3 bg-hero-pattern bg-cover h-screen"
   >
     <v-card
@@ -65,6 +65,7 @@ export default {
   name: "TripDetails",
 
   setup() {
+    // TODO Fix issue with overflow content and not being able to scroll the full content
     const route = useRoute();
     const store = useStore();
     const data = computed(() => store.state.tripData);
@@ -83,21 +84,7 @@ export default {
       store.dispatch("getTripData");
     });
     onMounted(() => {
-      if (data.value && name) {
-        const updateShowRefObj = {};
-        data.value[`${name}`].placesToVisit.forEach(
-          (place: PlacesToVisitObjectType) => {
-            Object.assign(updateShowRefObj, {
-              [`${place.locationName}`]: false,
-            });
-          }
-        );
-        show.value = updateShowRefObj;
-      }
-    });
-
-    onUpdated(() => {
-      if (data.value && name) {
+      if (data.value && name && !Object.keys(show.value).length) {
         const updateShowRefObj = {};
         data.value[`${name}`].placesToVisit.forEach(
           (place: PlacesToVisitObjectType) => {
