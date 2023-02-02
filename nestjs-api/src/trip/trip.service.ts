@@ -14,12 +14,12 @@ const placeholderData = {
         lng: -156.04289241605815,
       },
       {
-        locationName: 'Magic Sands Beach Park',
+        locationName: 'Diamond Head',
         details:
-          'Volcano rising 8,271 feet above sea level, with some areas open for moderate hikes & exploration.',
+          'Iconic volcanic peak, home to hiking trails & remains of historical military fortifications.',
         src: './kona-airport.jpg',
-        lat: 19.695442474030024,
-        lng: -155.86390747524925,
+        lat: 21.268522566377676,
+        lng: -157.8052551867854,
       },
       {
         locationName: 'Magic Sands Beach Park',
