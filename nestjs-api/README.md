@@ -62,5 +62,9 @@
   ### prisma/
   - schema.prisma: Where models will be declared.
   - Important: for the `DATABASE_URL`, prisma will grab the nearest .env file to it. 
-  - 
+
+
+### To seed dev db: 
+- `npx prisma db seed`
+- ``npx prisma studio``
    
