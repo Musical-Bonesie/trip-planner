@@ -64,7 +64,8 @@
   - Important: for the `DATABASE_URL`, prisma will grab the nearest .env file to it. 
 
 
-### To seed dev db: 
+### To seed dev db with placeholder data: 
+*Make sure you update the UserSeedData hash 
 - `npx prisma db seed`
-- ``npx prisma studio``
+- To see if it applied to the dev database: `npx prisma studio`
    

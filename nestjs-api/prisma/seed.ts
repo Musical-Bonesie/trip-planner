@@ -127,6 +127,7 @@ const UserSeedData = [
     id: 1,
     role: 'ADMIN',
     email: 'seedUser@gmail.com',
+    // TODO remmeber to update this
     hash: '"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoidGVzdEBlbWFpbC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE2NzU0NDM5NTQsImV4cCI6MTY3NTQ0NDg1NH0.ns2XRQ3Z_KhhRJIdnPGHxlX4W1zGe8zr9HmTUEpgY-c',
     firstName: 'Roberta',
     lastName: 'Bondar',
