@@ -38,6 +38,25 @@
   providers: [AuthService],
 }) `
 
+5. Auth Validations for DTO:
+  - `yarn add class-validator class-transformer`
+  - see DTO folder for more details (this is used as a Type for auth and added to main.ts as a global pipe)
+
+   6. Bonus: Create a script to clean up and respawn docker db and apply prisma migrations to the DB
+   `"db:dev:remove": "docker compose rm dev-db -s -f -v",
+    "db:dev:up": "docker compose up dev-db -d",
+    "prisma:dev:deploy":"prisma migrate deploy",
+    "db:dev:restart": "yarn db:dev:remove && yarn db:dev:up && sleep 1 && yarn prisma:dev:deploy",
+    `
+   * Windows Users:* replace `sleep 1 `with `TIMEOUT 1`
+
+6. Create a nestjs config file to keep DB url secure
+   - `yarn add @nestjs/config`
+   - app/module.ts add `  ConfigModule.forRoot({ isGlobal: true }),` so it automatically applies the `.env`
+   - Inject it into src/prisma/prisma.service.ts: `constructor(config: ConfigService`) and inside the super: `  url: config.get('DATABASE_URL'),`
+
+
+
   ## Prisma Breakdown:
 
   ### prisma/
